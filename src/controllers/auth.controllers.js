@@ -10,6 +10,12 @@ import { sendResponse } from "../utils/ApiResponse.js";
 
 export const signUpController = async (req, res, next) => {
     try {
+        const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            throw new AppError("Must fill up required field..", 400);
+        }
+
         return sendResponse(res, 200, "Sign Up work fine ...", {});
     } catch (error) {
         next(error);
