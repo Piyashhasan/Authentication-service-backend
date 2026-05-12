@@ -18,18 +18,19 @@ export const signUpController = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
 
-        // -- validation check --
+        // ---- validation check
         if (!name || !email || !password) {
             throw new AppError("Must fill in the required input field..", 400);
         }
 
-        // -- user exist --
+        // ---- user exist
         const existUser = await User.findOne({ email });
         if (existUser) {
+            console.log("- hello ");
             throw new AppError("User alreay exist, Please login..", 409);
         }
 
-        // -- create user --
+        // ---- create user
         const hashPassword = await bcrypt.hash(password, saltRounds);
 
         const userCreate = await User.create({
@@ -42,7 +43,7 @@ export const signUpController = async (req, res, next) => {
             throw new AppError("Failed to create user..", 500);
         }
 
-        // -- generate refreshToken & accessToken --
+        // ---- generate refreshToken & accessToken
         const refreshToken = jwt.sign(
             {
                 userId: userCreate.id,
@@ -61,7 +62,7 @@ export const signUpController = async (req, res, next) => {
             { expiresIn: "15m" }
         );
 
-        // -- Set refresh token in HttpOnly cookie --
+        // ---- Set refresh token in HttpOnly cookie
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: true,
@@ -69,7 +70,7 @@ export const signUpController = async (req, res, next) => {
             maxAge: 15 * 24 * 60 * 60 * 1000,
         });
 
-        // -- res data --
+        // ---- res data
         const data = {
             userId: userCreate.id,
             email,
@@ -89,7 +90,7 @@ export const signUpController = async (req, res, next) => {
 // @error handle - throw new AppError("User already exists", 401);
 // @res handle   - return sendResponse(res, 404, "Routes Not Found ...!",{});
 
-export const signiNController = async (req, res, next) => {
+export const signInController = async (req, res, next) => {
     try {
         return sendResponse(res, 200, "Sign In work fine ...", {});
     } catch (error) {
