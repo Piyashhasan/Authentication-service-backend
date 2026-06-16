@@ -26,7 +26,6 @@ export const signUpController = async (req, res, next) => {
         // ---- user exist
         const existUser = await User.findOne({ email });
         if (existUser) {
-            console.log("- hello ");
             throw new AppError("User alreay exist, Please login..", 409);
         }
 
@@ -78,7 +77,7 @@ export const signUpController = async (req, res, next) => {
             accessToken,
         };
 
-        return sendResponse(res, 200, "Sign up successfully ...", { data });
+        return sendResponse(res, 201, "Sign up successfully ...", { data });
     } catch (error) {
         next(error);
     }
@@ -93,7 +92,60 @@ export const signUpController = async (req, res, next) => {
 
 export const signInController = async (req, res, next) => {
     try {
-        return sendResponse(res, 200, "Sign In work fine ...", {});
+        const { email, password } = req.body;
+
+        // ---- validation check
+        if (!email || !password) {
+            throw new AppError("Must fill in the required input field..", 400);
+        }
+
+        // ---- user exist or not
+        const existUser = await User.findOne({ email });
+        if (!existUser) {
+            throw new AppError("User not exist, Please register..", 409);
+        }
+
+        // ---- password check
+        const isMatch = await bcrypt.compare(password, existUser.password);
+        if (!isMatch) {
+            throw new AppError("Password not match..", 401);
+        }
+
+        // ---- generate refreshToken & AccessToken
+        const refreshToken = jwt.sign(
+            {
+                userId: existUser.id,
+                email: existUser.email,
+            },
+            config.JWT_SECRET,
+            { expiresIn: "15d" }
+        );
+
+        const accessToken = jwt.sign(
+            {
+                userId: existUser.id,
+                email: existUser.email,
+            },
+            config.JWT_SECRET,
+            { expiresIn: "15m" }
+        );
+
+        // ---- Set refresh token in HttpOnly cookie
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 15 * 24 * 60 * 60 * 1000,
+        });
+
+        // ---- res data
+        const data = {
+            userId: existUser.id,
+            email,
+            accessToken,
+        };
+
+        return sendResponse(res, 200, "Sign In successfully ...", { data });
     } catch (error) {
         next(error);
     }

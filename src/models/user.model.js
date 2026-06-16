@@ -29,8 +29,6 @@ const userSchema = new mongoose.Schema(
         },
         contact: {
             type: String,
-            unique: true,
-            sparse: true,
             default: null,
         },
         avatar: {
