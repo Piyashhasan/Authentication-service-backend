@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 // -- SIGNUP CONTROLLER --
 // @desc         - Signup user
 // @route        - POST - /api/v1/auth/sign-up
-// @access       - private
+// @access       - public
 // @error handle - throw new AppError("...message ...", status code (401));
 // @res handle   - return sendResponse(res, 404, "Routes Not Found ...!", {});
 
@@ -30,9 +30,10 @@ export const signUpController = async (req, res, next) => {
             throw new AppError("User alreay exist, Please login..", 409);
         }
 
-        // ---- create user
+        // ---- password hash
         const hashPassword = await bcrypt.hash(password, saltRounds);
 
+        // ---- create user
         const userCreate = await User.create({
             name,
             email,
@@ -86,7 +87,7 @@ export const signUpController = async (req, res, next) => {
 // -- SIGNIN CONTROLLER --
 // @desc         - Signup user
 // @route        - POST - /api/v1/auth/sign-in
-// @access       - private
+// @access       - public
 // @error handle - throw new AppError("User already exists", 401);
 // @res handle   - return sendResponse(res, 404, "Routes Not Found ...!",{});
 
