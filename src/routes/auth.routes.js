@@ -1,5 +1,6 @@
 import express from "express";
 import {
+    forgetPassword,
     signInController,
     signUpController,
 } from "../controllers/auth.controllers.js";
@@ -15,6 +16,7 @@ const authRoute = express.Router();
 // -- api endpoints --
 authRoute
     .post("/sign-up", joiValidator(signUpValidationSchema), signUpController)
-    .post("/sign-in", joiValidator(signInValidationSchema), signInController);
+    .post("/sign-in", joiValidator(signInValidationSchema), signInController)
+    .post("/forget-password", forgetPassword);
 
 export default authRoute;

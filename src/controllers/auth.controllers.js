@@ -11,8 +11,6 @@ import cookieParser from "cookie-parser";
 // @desc         - Signup user
 // @route        - POST - /api/v1/auth/sign-up
 // @access       - public
-// @error handle - throw new AppError("...message ...", status code (401));
-// @res handle   - return sendResponse(res, 404, "Routes Not Found ...!", {});
 
 export const signUpController = async (req, res, next) => {
     try {
@@ -87,8 +85,6 @@ export const signUpController = async (req, res, next) => {
 // @desc         - Signup user
 // @route        - POST - /api/v1/auth/sign-in
 // @access       - public
-// @error handle - throw new AppError("User already exists", 401);
-// @res handle   - return sendResponse(res, 404, "Routes Not Found ...!",{});
 
 export const signInController = async (req, res, next) => {
     try {
@@ -146,6 +142,19 @@ export const signInController = async (req, res, next) => {
         };
 
         return sendResponse(res, 200, "Sign In successfully ...", { data });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// -- FORGET PASSWORD CONTROLLER --
+// @desc         - Froget password user
+// @route        - POST - /api/v1/auth/forget-password
+// @access       - public
+
+export const forgetPassword = async (req, res, next) => {
+    try {
+        return sendResponse(res, 200, "Forget password work fine ...");
     } catch (error) {
         next(error);
     }
