@@ -6,6 +6,7 @@ import {
 } from "../controllers/auth.controllers.js";
 import joiValidator from "../middlewares/joi.validate.middleware.js";
 import {
+    forgetPasswordValidationSchema,
     signInValidationSchema,
     signUpValidationSchema,
 } from "../validations/auth.validation.js";
@@ -17,6 +18,10 @@ const authRoute = express.Router();
 authRoute
     .post("/sign-up", joiValidator(signUpValidationSchema), signUpController)
     .post("/sign-in", joiValidator(signInValidationSchema), signInController)
-    .post("/forget-password", forgetPassword);
+    .post(
+        "/forget-password",
+        joiValidator(forgetPasswordValidationSchema),
+        forgetPassword
+    );
 
 export default authRoute;

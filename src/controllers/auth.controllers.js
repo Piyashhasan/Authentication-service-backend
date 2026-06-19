@@ -148,7 +148,7 @@ export const signInController = async (req, res, next) => {
 };
 
 // -- FORGET PASSWORD CONTROLLER --
-// @desc         - Froget password user
+// @desc         - Forget password user
 // @route        - POST - /api/v1/auth/forget-password
 // @access       - public
 
