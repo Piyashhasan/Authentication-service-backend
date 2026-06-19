@@ -154,7 +154,36 @@ export const signInController = async (req, res, next) => {
 
 export const forgetPassword = async (req, res, next) => {
     try {
-        return sendResponse(res, 200, "Forget password work fine ...");
+        const { email, newPassword } = req.body;
+
+        // ---- validation check
+        if (!email || !newPassword) {
+            throw new AppError("Must fill in the required input field..", 400);
+        }
+
+        // ---- user exist or not check
+        const existUser = await User.findOne({ email });
+        if (!existUser) {
+            throw new AppError("User not exist, Please register..", 409);
+        }
+
+        // ---- hash password
+        const hashPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        // ---- update password
+        const updatePassword = await User.updateOne(
+            { email },
+            { $set: { password: hashPassword } }
+        );
+
+        if (updatePassword.modifiedCount === 0) {
+            throw new AppError(
+                "Password update failed. Please try again.",
+                500
+            );
+        }
+
+        return sendResponse(res, 200, "Password changed successfully.");
     } catch (error) {
         next(error);
     }

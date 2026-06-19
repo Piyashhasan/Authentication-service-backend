@@ -49,9 +49,9 @@ export const forgetPasswordValidationSchema = Joi.object({
         "any.required": "Email is required",
     }),
 
-    password: Joi.string().min(6).required().messages({
-        "string.min": "Password must be minimum 6 characters",
-        "string.empty": "Password is required",
-        "any.required": "Password is required",
+    newPassword: Joi.string().min(6).required().messages({
+        "string.min": "New password must be minimum 6 characters",
+        "string.empty": "New password is required",
+        "any.required": "New password is required",
     }),
 });
