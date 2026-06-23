@@ -10,6 +10,7 @@ import globalLimiter from "./middlewares/rate.limiter.middleware.js";
 import globalErrorMiddleware from "./middlewares/global.error.middleware.js";
 import { sendResponse } from "./utils/ApiResponse.js";
 import { config } from "./config.js";
+import profileRoute from "./routes/profile.routes.js";
 
 // --- Initialize app ---
 const app = express();
@@ -42,6 +43,8 @@ app.use(express.static("public"));
 
 // ================= API V1 endpoints start =================
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/profile", profileRoute);
+
 // ================= API V1 endpoints end ===================
 
 // -- API health check --
