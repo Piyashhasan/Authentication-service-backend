@@ -11,23 +11,14 @@ import AppError from "../utils/ApiError.js";
 
 export const getUserInfo = async (req, res, next) => {
     try {
-        const authHeader = req.headers.authorization;
+        const { id } = req.user;
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            throw new AppError("Unauthorized access.", 401);
-        }
-
-        const token = authHeader.split(" ")[1];
-
-        const decoded = jwt.verify(token, config.JWT_SECRET);
-        const userId = decoded.userId;
-
-        if (!userId) {
+        if (!id) {
             throw new AppError("Unauthorized access.", 401);
         }
 
         const userInformation =
-            await User.findById(userId).select("-password -__v");
+            await User.findById(id).select("-password -__v");
 
         if (!userInformation) {
             throw new AppError("User not found please register", 404);
