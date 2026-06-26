@@ -3,6 +3,7 @@ import {
     forgetPassword,
     signInController,
     signUpController,
+    tokenRegenerate,
 } from "../controllers/auth.controllers.js";
 import joiValidator from "../middlewares/joi.validate.middleware.js";
 import {
@@ -22,6 +23,7 @@ authRoute
         "/forget-password",
         joiValidator(forgetPasswordValidationSchema),
         forgetPassword
-    );
+    )
+    .get("/token-regenerate", tokenRegenerate);
 
 export default authRoute;

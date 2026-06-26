@@ -188,3 +188,70 @@ export const forgetPassword = async (req, res, next) => {
         next(error);
     }
 };
+
+// -- TOKEN REGENERATE --
+// @desc         - Access Token & Refresh Token regenerate
+// @route        - POST - /api/v1/auth/token-regenerate
+// @access       - public
+
+export const tokenRegenerate = async (req, res, next) => {
+    try {
+        const { refreshToken } = req.cookies;
+
+        if (!refreshToken) {
+            throw new AppError("Refresh token not found.", 404);
+        }
+
+        const { userId, email } = jwt.verify(refreshToken, config.JWT_SECRET);
+
+        const findUser = await User.findById(userId);
+
+        if (!findUser) {
+            throw new AppError("User not found.", 404);
+        }
+
+        // ---- generate refreshToken & accessToken
+        if (userId && email) {
+            const regenerateRefreshToken = jwt.sign(
+                {
+                    userId,
+                    email,
+                },
+                config.JWT_SECRET,
+                { expiresIn: "15d" }
+            );
+
+            const regenerateAccessToken = jwt.sign(
+                {
+                    userId,
+                    email,
+                },
+                config.JWT_SECRET,
+                { expiresIn: "15m" }
+            );
+
+            // ---- Set refresh token in HttpOnly cookie
+            res.cookie("refreshToken", regenerateRefreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: 15 * 24 * 60 * 60 * 1000,
+            });
+
+            // ---- res data
+            const data = {
+                userId,
+                email,
+                accessToken: regenerateAccessToken,
+            };
+
+            return sendResponse(res, 200, "Token re-generate successfully.", {
+                data,
+            });
+        }
+
+        return sendResponse(res, 401, "Token re-generate failed");
+    } catch (error) {
+        next(error);
+    }
+};
