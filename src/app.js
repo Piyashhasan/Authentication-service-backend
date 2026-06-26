@@ -11,6 +11,7 @@ import globalErrorMiddleware from "./middlewares/global.error.middleware.js";
 import { sendResponse } from "./utils/ApiResponse.js";
 import { config } from "./config.js";
 import profileRoute from "./routes/profile.routes.js";
+import otpRoute from "./routes/otp.routes.js";
 
 // --- Initialize app ---
 const app = express();
@@ -43,6 +44,7 @@ app.use(express.static("public"));
 
 // ================= API V1 endpoints start =================
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/otp", otpRoute);
 app.use("/api/v1/profile", profileRoute);
 
 // ================= API V1 endpoints end ===================
