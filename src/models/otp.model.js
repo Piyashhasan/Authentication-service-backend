@@ -32,4 +32,6 @@ const otpSchema = new mongoose.Schema(
 // -- TTL Index automatic delete expire OTP --
 otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-export default mongoose.model("Otp", otpSchema);
+const OTP = mongoose.model("Otp", otpSchema);
+
+export default OTP;

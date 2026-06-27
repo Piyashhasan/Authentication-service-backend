@@ -6,6 +6,7 @@ import { saltRounds } from "../constant.js";
 import { sendResponse } from "../utils/ApiResponse.js";
 import { config } from "../config.js";
 import cookieParser from "cookie-parser";
+import { createOtp } from "../helpers/createOtp.js";
 
 // -- SIGNUP CONTROLLER --
 // @desc         - Signup user
@@ -41,38 +42,12 @@ export const signUpController = async (req, res, next) => {
             throw new AppError("Failed to create user..", 500);
         }
 
-        // ---- generate refreshToken & accessToken
-        const refreshToken = jwt.sign(
-            {
-                userId: userCreate.id,
-                email: userCreate.email,
-            },
-            config.JWT_SECRET,
-            { expiresIn: "15d" }
-        );
-
-        const accessToken = jwt.sign(
-            {
-                userId: userCreate.id,
-                email: userCreate.email,
-            },
-            config.JWT_SECRET,
-            { expiresIn: "15m" }
-        );
-
-        // ---- Set refresh token in HttpOnly cookie
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "strict",
-            maxAge: 15 * 24 * 60 * 60 * 1000,
-        });
+        // ---- OTP generate
+        await createOtp(userCreate.id, userCreate.email, "signupVerification");
 
         // ---- res data
         const data = {
             userId: userCreate.id,
-            email,
-            accessToken,
         };
 
         return sendResponse(res, 201, "Sign up successfully ...", { data });
@@ -137,7 +112,7 @@ export const signInController = async (req, res, next) => {
         // ---- res data
         const data = {
             userId: existUser.id,
-            email,
+            email: existUser.email,
             accessToken,
         };
 

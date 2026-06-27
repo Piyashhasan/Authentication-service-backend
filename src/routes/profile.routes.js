@@ -14,7 +14,7 @@ const profileRoute = express.Router();
 profileRoute
     .get("/info", authenticateUser, getUserInfo)
     .post(
-        "/image-upload",
+        "/image-upload/avatar",
         authenticateUser,
         upload.single("avatar"),
         profileImageUpload

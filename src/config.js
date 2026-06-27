@@ -11,6 +11,8 @@ const requiredEnvVars = [
     "CLOUDINARY_CLOUD_NAME",
     "CLOUDINARY_API_KEY",
     "CLOUDINARY_API_SECRET",
+    "EMAIL",
+    "APP_PASS",
 ];
 
 const missingEnvVars = requiredEnvVars.filter((envKey) => !process.env[envKey]);
@@ -37,4 +39,8 @@ export const config = {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+
+    // -- nodemailer secrete --
+    EMAIL: process.env.EMAIL,
+    APP_PASS: process.env.APP_PASS,
 };
